@@ -15,7 +15,7 @@ from dataset import decode_adj, encode_adj
 
 def sample_sigmoid(y, sample, thresh=0.5, sample_time=2, device="cpu"):
     """
-        do sampling over unnormalized score
+    do sampling over unnormalized score
     :param y: input
     :param sample: Bool
     :param thresh: if not sample, the threshold

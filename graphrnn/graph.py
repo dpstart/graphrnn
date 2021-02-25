@@ -16,5 +16,4 @@ def create(args):
             for j in range(2, 6):
                 graphs.append(nx.grid_2d_graph(i, j))
         args.max_prev_node = 15
-
     return graphs

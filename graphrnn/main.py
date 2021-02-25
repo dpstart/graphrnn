@@ -14,9 +14,9 @@ import matplotlib.pyplot as plt
 device = "cuda" if torch.cuda.is_available() else "cpu"
 parser = argparse.ArgumentParser()
 parser.add_argument("graph_type", nargs="?", default="grid_small")
-parser.add_argument("embedding_size_rnn", nargs="?", default=32)
-parser.add_argument("hidden_size_rnn", nargs="?", default=64)
-parser.add_argument("embedding_size_output", nargs="?", default=32)
+parser.add_argument("embedding_size_rnn", nargs="?", default=64)
+parser.add_argument("hidden_size_rnn", nargs="?", default=128)
+parser.add_argument("embedding_size_output", nargs="?", default=64)
 parser.add_argument("num_layers", nargs="?", default=4)
 parser.add_argument("batch_size", nargs="?", default=32)
 parser.add_argument("batch_ratio", nargs="?", default=32)
