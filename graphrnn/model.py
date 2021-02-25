@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+device = "cuda" if torch.cuda.is_available else "cpu"
+
 
 class GRU(nn.Module):
     def __init__(
@@ -51,7 +53,7 @@ class GRU(nn.Module):
     def init_hidden(self, batch_size):
         return torch.autograd.Variable(
             torch.zeros(self.num_layers, batch_size, self.hidden_size)
-        )
+        ).to(device)
 
     def forward(self, x, pack=False, input_len=None):
 
