@@ -11,7 +11,7 @@ import torch
 
 import matplotlib.pyplot as plt
 
-device = "gpu" if torch.cuda.is_available() else "cpu"
+device = "cuda" if torch.cuda.is_available() else "cpu"
 parser = argparse.ArgumentParser()
 parser.add_argument("graph_type", nargs="?", default="grid_small")
 parser.add_argument("embedding_size_rnn", nargs="?", default=32)
