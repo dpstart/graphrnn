@@ -2,7 +2,7 @@ import pickle
 import networkx as nx
 import matplotlib.pyplot as plt
 
-with (open("./graphs/fnamepred30_3.dat", "rb")) as openfile:
+with (open("./graphs/fnamepred181_1.dat", "rb")) as openfile:
     o = pickle.load(openfile)
 
 nx.draw(o[0])
