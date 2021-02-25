@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 device = "gpu" if torch.cuda.is_available() else "cpu"
 parser = argparse.ArgumentParser()
-parser.add_argument("graph_type", nargs="?", default="grid")
+parser.add_argument("graph_type", nargs="?", default="grid_small")
 parser.add_argument("embedding_size_rnn", nargs="?", default=32)
 parser.add_argument("hidden_size_rnn", nargs="?", default=64)
 parser.add_argument("embedding_size_output", nargs="?", default=32)

@@ -5,10 +5,10 @@ import networkx as nx
 
 def bfs_seq(G, start_id):
     """
-    get a bfs node sequence
+    Get a bfs node sequence
     :param G:
     :param start_id:
-    :return:
+    :return: list of nodes in BFS order
     """
     dictionary = dict(nx.bfs_successors(G, start_id))
     start = [start_id]
@@ -63,10 +63,14 @@ def encode_adj(adj, max_prev_node=10, is_full=False):
     # pick up lower tri
     adj = np.tril(adj, k=-1)
     n = adj.shape[0]
+
+    # Skip first row and last column
     adj = adj[1:n, 0 : n - 1]
 
     # use max_prev_node to truncate
     # note: now adj is a (n-1)*(n-1) matrix
+
+    # The output has (n-1) rows and M columns
     adj_output = np.zeros((adj.shape[0], max_prev_node))
     for i in range(adj.shape[0]):
         input_start = max(0, i - max_prev_node + 1)
