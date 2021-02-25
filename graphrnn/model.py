@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-device = "cuda" if torch.cuda.is_available else "cpu"
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 class GRU(nn.Module):
@@ -50,6 +50,17 @@ class GRU(nn.Module):
                 ]
             )
 
+        for name, param in self.gru.named_parameters():
+            if "bias" in name:
+                nn.init.constant(param, 0.25)
+            elif "weight" in name:
+                nn.init.xavier_uniform(param, gain=nn.init.calculate_gain("sigmoid"))
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                m.weight.data = nn.init.xavier_uniform(
+                    m.weight.data, gain=nn.init.calculate_gain("relu")
+                )
+
     def init_hidden(self, batch_size):
         return torch.autograd.Variable(
             torch.zeros(self.num_layers, batch_size, self.hidden_size)
@@ -84,6 +95,11 @@ class MLP(nn.Module):
                 nn.Linear(embedding_size, y_size),
             ]
         )
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                m.weight.data = nn.init.xavier_uniform(
+                    m.weight.data, gain=nn.init.calculate_gain("relu")
+                )
 
     def forward(self, h):
         return self.mlp(h)
