@@ -1,13 +1,15 @@
+import numpy as np
+import networkx as nx
+
+import torch
 from torch import optim
 from torch.optim.lr_scheduler import MultiStepLR
-from time import gmtime, strftime
-import time as tm
-import numpy as np
-import torch
-import networkx as nx
 import torch.nn.functional as F
 import torch.nn as nn
 import torch.nn.init as init
+
+from time import gmtime, strftime
+import time as tm
 
 from util import binary_cross_entropy_weight, get_graph, save_graph_list
 from dataset import decode_adj, encode_adj
@@ -77,10 +79,15 @@ def train_mlp_epoch(
         # batch size * max_num_node * M (max_prev_node)
         x_unsorted = data["x"].float()
         y_unsorted = data["y"].float()
+
+        # Lens of original graphs
         y_len_unsorted = data["len"]
         y_len_max = max(y_len_unsorted)
+
+        # I think this is useless
         x_unsorted = x_unsorted[:, 0:y_len_max, :]
         y_unsorted = y_unsorted[:, 0:y_len_max, :]
+
         # initialize lstm hidden state according to batch size
         rnn.hidden = rnn.init_hidden(batch_size=x_unsorted.size(0))
 
@@ -96,6 +103,8 @@ def train_mlp_epoch(
         y_pred = output(h)
         y_pred = torch.sigmoid(y_pred)
         # clean
+
+        # UNCLEAR
         y_pred = torch.nn.utils.rnn.pack_padded_sequence(
             y_pred, y_len, batch_first=True
         )

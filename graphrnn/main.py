@@ -1,21 +1,21 @@
-from graph import create_graph
+import torch
+import matplotlib.pyplot as plt
+
 import argparse
 import networkx as nx
 import random
 
+from graph import create_graph
 from train import train
-
 from model import GRU, MLP
 from dataset import Graph_sequence_sampler_pytorch
-import torch
 
-import matplotlib.pyplot as plt
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("graph_type", nargs="?", default="grid_small")
+parser.add_argument("graph_type", nargs="?", default="grid")
 parser.add_argument("embedding_size_rnn", nargs="?", default=64)
 parser.add_argument("hidden_size_rnn", nargs="?", default=128)
 parser.add_argument("embedding_size_output", nargs="?", default=64)
@@ -34,19 +34,22 @@ parser.add_argument("epochs_test_start", nargs="?", default=1)
 parser.add_argument("test_total_size", nargs="?", default=10)
 parser.add_argument("test_batch_size", nargs="?", default=32)
 parser.add_argument("graph_save_path", nargs="?", default="./graphs/")
-parser.add_argument("fname_pred", nargs="?", default="fnamepred")
+parser.add_argument("fname_pred", nargs="?", default="out_")
 args = parser.parse_args()
 
 graphs = create_graph(args)
 args.max_num_node = max([graphs[i].number_of_nodes() for i in range(len(graphs))])
 
+### Split dataset
 
-random.seed(123)
+random.seed(42)
 random.shuffle(graphs)
 graphs_len = len(graphs)
 graphs_test = graphs[int(0.8 * graphs_len) :]
 graphs_train = graphs[0 : int(0.8 * graphs_len)]
 graphs_val = graphs[0 : int(0.2 * graphs_len)]
+
+### Build models
 
 rnn = GRU(
     input_size=args.max_prev_node,
@@ -56,11 +59,14 @@ rnn = GRU(
     has_input=True,
     has_output=False,
 ).to(device)
+
 output = MLP(
     h_size=args.hidden_size_rnn,
     embedding_size=args.embedding_size_output,
     y_size=args.max_prev_node,
 ).to(device)
+
+### Build data stuff
 
 dataset = Graph_sequence_sampler_pytorch(
     graphs_train, max_prev_node=args.max_prev_node, max_num_node=args.max_num_node
@@ -76,5 +82,7 @@ dataset_loader = torch.utils.data.DataLoader(
     num_workers=args.num_workers,
     sampler=sample_strategy,
 )
+
+### Train
 
 train(args, dataset_loader, rnn, output, device)

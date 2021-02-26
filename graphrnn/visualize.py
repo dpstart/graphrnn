@@ -10,8 +10,9 @@ def draw_graph(G, prefix="test"):
     nx.draw_networkx(G, with_labels=True, node_size=35, pos=pos)
 
 
-with (open("./graphs/fnamepred1000_3.dat", "rb")) as openfile:
-    o = pickle.load(openfile)
+FNAME = "./graphs/fnamepred1000_3.dat"
+with (open(FNAME, "rb")) as openfile:
+    out = pickle.load(openfile)
 
-draw_graph(o[0])
+draw_graph(out[0])
 plt.show()

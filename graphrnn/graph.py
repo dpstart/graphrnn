@@ -3,7 +3,6 @@ import numpy as np
 
 
 def create_graph(args):
-    ### load datasets
     graphs = []
     # synthetic graphs
     if args.graph_type == "grid":
