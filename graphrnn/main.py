@@ -1,4 +1,4 @@
-from graph import create
+from graph import create_graph
 import argparse
 import networkx as nx
 import random
@@ -12,6 +12,8 @@ import torch
 import matplotlib.pyplot as plt
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("graph_type", nargs="?", default="grid_small")
 parser.add_argument("embedding_size_rnn", nargs="?", default=64)
@@ -35,7 +37,7 @@ parser.add_argument("graph_save_path", nargs="?", default="./graphs/")
 parser.add_argument("fname_pred", nargs="?", default="fnamepred")
 args = parser.parse_args()
 
-graphs = create(args)
+graphs = create_graph(args)
 args.max_num_node = max([graphs[i].number_of_nodes() for i in range(len(graphs))])
 
 

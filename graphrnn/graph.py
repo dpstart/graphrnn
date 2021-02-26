@@ -2,7 +2,7 @@ import networkx as nx
 import numpy as np
 
 
-def create(args):
+def create_graph(args):
     ### load datasets
     graphs = []
     # synthetic graphs

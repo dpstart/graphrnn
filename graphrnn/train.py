@@ -73,6 +73,8 @@ def train_mlp_epoch(
     for batch_idx, data in enumerate(data_loader):
         rnn.zero_grad()
         output.zero_grad()
+
+        # batch size * max_num_node * M (max_prev_node)
         x_unsorted = data["x"].float()
         y_unsorted = data["y"].float()
         y_len_unsorted = data["len"]
