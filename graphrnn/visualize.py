@@ -12,7 +12,7 @@ def draw_graph(G, k=1, node_size=55,alpha=1, width=1.3):
     nx.draw_networkx_edges(G, pos, width=width, alpha=alpha)
 
 
-FNAME = "./graphs/out_1500_2.dat"
+FNAME = "./graphs/out_2600_1.dat"
 with (open(FNAME, "rb")) as openfile:
     out = pickle.load(openfile)
 
