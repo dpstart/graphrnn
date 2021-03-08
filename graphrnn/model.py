@@ -35,6 +35,8 @@ class GraphRNN(pl.LightningModule):
         sample_time=1,
 
     ):
+        self.rnn = self.rnn.to(device)
+        self.mlp = self.mlp.to(device)
         self.rnn.hidden = self.rnn.init_hidden(test_batch_size)
         self.rnn.eval()
         self.mlp.eval()
