@@ -43,13 +43,13 @@ class GraphRNN(pl.LightningModule):
         max_num_node = int(self.args.max_num_node)
         y_pred = torch.autograd.Variable(
             torch.zeros(test_batch_size, max_num_node, self.args.max_prev_node)
-        )  # normalized prediction score
+        ).to(device)  # normalized prediction score
         y_pred_long = torch.autograd.Variable(
             torch.zeros(test_batch_size, max_num_node, self.args.max_prev_node)
-        )  # discrete prediction
+        ).to(device)  # discrete prediction
         x_step = torch.autograd.Variable(
             torch.ones(test_batch_size, 1, self.args.max_prev_node)
-        )
+        ).to(device)
         for i in range(max_num_node):
             h = self.rnn(x_step)
             y_pred_step = self.mlp(h)
