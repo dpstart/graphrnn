@@ -86,7 +86,7 @@ class GraphRNN(pl.LightningModule):
 
         # sort input
         y_len, sort_index = torch.sort(y_len_unsorted, 0, descending=True)
-        y_len = y_len.numpy().tolist()
+        y_len = y_len.cpu().numpy().tolist()
         x = torch.index_select(x_unsorted, 0, sort_index)
         y = torch.index_select(y_unsorted, 0, sort_index)
         x = torch.autograd.Variable(x)
