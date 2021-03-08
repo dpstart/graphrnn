@@ -36,9 +36,6 @@ class GraphRNN(pl.LightningModule):
 
     ):
 
-        print(device)
-        self.rnn = self.rnn.to(device)
-        self.mlp = self.mlp.to(device)
         self.rnn.hidden = self.rnn.init_hidden(test_batch_size)
         self.rnn.eval()
         self.mlp.eval()
@@ -55,8 +52,7 @@ class GraphRNN(pl.LightningModule):
             torch.ones(test_batch_size, 1, self.args.max_prev_node)
         ).to(device)
         for i in range(max_num_node):
-            h = self.rnn(x_step)
-            y_pred_step = self.mlp(h)
+            y_pred_step = self(x_step)
             y_pred[:, i : i + 1, :] = F.sigmoid(y_pred_step)
             x_step = sample_sigmoid(
                 y_pred_step, sample=True, sample_time=sample_time
