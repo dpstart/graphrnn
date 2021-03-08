@@ -70,6 +70,9 @@ class GraphRNN(pl.LightningModule):
             G_pred = get_graph(adj_pred)  # get a graph from zero-padded adj
             G_pred_list.append(G_pred)
 
+
+        self.rnn.train()
+        self.mlp.train()
         return G_pred_list
 
     def training_step(self, batch, batch_idx):
