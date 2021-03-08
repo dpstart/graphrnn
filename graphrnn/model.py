@@ -22,16 +22,10 @@ class GraphRNN(pl.LightningModule):
         self.mlp = mlp
         self.args = args
     
-    def forward(self, x, y_len=None, test=False):
-
-        if not test:
-            h = self.rnn(x, pack=True, input_len=y_len)
-            y_pred = self.mlp(h)
-            return torch.sigmoid(y_pred)
-        else:
-            x = x.to(device)
-            h = self.rnn(x)
-            return self.mlp(h)
+    def forward(self, x, y_len):
+        h = self.rnn(x, pack=True, input_len=y_len)
+        y_pred = self.mlp(h)
+        return torch.sigmoid(y_pred)
 
     def test_epoch(
         self,
@@ -41,7 +35,7 @@ class GraphRNN(pl.LightningModule):
         sample_time=1,
 
     ):
-
+    
         self.rnn.hidden = self.rnn.init_hidden(test_batch_size)
         self.rnn.eval()
         self.mlp.eval()
@@ -58,13 +52,14 @@ class GraphRNN(pl.LightningModule):
             torch.ones(test_batch_size, 1, self.args.max_prev_node)
         ).to(device)
         for i in range(max_num_node):
-            y_pred_step = self(x_step, test=True)
+            h = self.rnn(x_step)
+            y_pred_step = self.mlp(h)
             y_pred[:, i : i + 1, :] = F.sigmoid(y_pred_step)
             x_step = sample_sigmoid(
                 y_pred_step, sample=True, sample_time=sample_time
             )
             y_pred_long[:, i : i + 1, :] = x_step
-            self.rnn.hidden = torch.autograd.Variable(self.rnn.hidden.data)
+            self.rnn.hidden = torch.autograd.Variable(self.rnn.hidden.data).to(device)
         y_pred_data = y_pred.data
         y_pred_long_data = y_pred_long.data.long()
 
