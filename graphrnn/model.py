@@ -57,7 +57,7 @@ class GraphRNN(pl.LightningModule):
             y_pred[:, i : i + 1, :] = F.sigmoid(y_pred_step)
             x_step = sample_sigmoid(
                 y_pred_step, sample=True, sample_time=sample_time
-            )
+            ).to(device)
             y_pred_long[:, i : i + 1, :] = x_step
             self.rnn.hidden = torch.autograd.Variable(self.rnn.hidden.data).to(device)
         y_pred_data = y_pred.data
