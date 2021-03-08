@@ -7,6 +7,9 @@ import numpy as np
 import pickle
 import networkx as nx
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+
 def sample_sigmoid(y, sample, thresh=0.5, sample_time=2):
     """
     do sampling over unnormalized score
@@ -31,7 +34,7 @@ def sample_sigmoid(y, sample, thresh=0.5, sample_time=2):
                 for j in range(sample_time):
                     y_thresh = torch.autograd.Variable(
                         torch.rand(y.size(1), y.size(2))
-                    )
+                    ).to(device)
                     y_result[i] = torch.gt(y[i], y_thresh).float()
                     if (torch.sum(y_result[i]).data > 0).any():
                         break
@@ -40,11 +43,11 @@ def sample_sigmoid(y, sample, thresh=0.5, sample_time=2):
         else:
             y_thresh = torch.autograd.Variable(
                 torch.rand(y.size(0), y.size(1), y.size(2))
-            )
+            ).to(device)
             y_result = torch.gt(y, y_thresh).float()
     # do max likelihood based on some threshold
     else:
-        y_thresh = Variable(torch.ones(y.size(0), y.size(1), y.size(2)) * thresh).cuda()
+        y_thresh = Variable(torch.ones(y.size(0), y.size(1), y.size(2)) * thresh).to(device)
         y_result = torch.gt(y, y_thresh).float()
     return y_result
 
