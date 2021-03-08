@@ -10,6 +10,9 @@ import pytorch_lightning as pl
 from util import binary_cross_entropy_weight, get_graph, save_graph_list, sample_sigmoid
 from dataset import decode_adj, encode_adj
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+
 
 class GraphRNN(pl.LightningModule):
 
@@ -197,7 +200,7 @@ class GRU(nn.Module):
     def init_hidden(self, batch_size):
         return torch.autograd.Variable(
             torch.zeros(self.num_layers, batch_size, self.hidden_size)
-        )
+        ).to(device)
 
     def forward(self, x, pack=False, input_len=None):
 

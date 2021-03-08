@@ -12,6 +12,8 @@ from model import GRU, MLP, GraphRNN
 from dataset import Graph_sequence_sampler_pytorch
 
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 parser = argparse.ArgumentParser()
 parser.add_argument("graph_type", nargs="?", default="grid_small")
 parser.add_argument("embedding_size_rnn", nargs="?", default=64)
@@ -58,13 +60,13 @@ rnn = GRU(
     num_layers=args.num_layers,
     has_input=True,
     has_output=False,
-)
+).to(device)
 
 output = MLP(
     h_size=args.hidden_size_rnn,
     embedding_size=args.embedding_size_output,
     y_size=args.max_prev_node,
-)
+).to(device)
 
 ### Build data stuff
 
@@ -86,5 +88,5 @@ dataset_loader = torch.utils.data.DataLoader(
 model = GraphRNN(rnn, output, args)
 
 ### Train
-trainer = pl.Trainer(gpus=-1)
+trainer = pl.Trainer(gpus=1)
 trainer.fit(model, dataset_loader)
