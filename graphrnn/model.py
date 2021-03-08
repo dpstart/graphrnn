@@ -29,6 +29,7 @@ class GraphRNN(pl.LightningModule):
             y_pred = self.mlp(h)
             return torch.sigmoid(y_pred)
         else:
+            x = x.to(device)
             h = self.rnn(x)
             return self.mlp(h)
 
