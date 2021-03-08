@@ -1,4 +1,6 @@
 import torch
+import pytorch_lightning as pl
+
 import matplotlib.pyplot as plt
 
 import argparse
@@ -6,12 +8,8 @@ import networkx as nx
 import random
 
 from graph import create_graph
-from train import train
-from model import GRU, MLP
+from model import GRU, MLP, GraphRNN
 from dataset import Graph_sequence_sampler_pytorch
-
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 parser = argparse.ArgumentParser()
@@ -31,10 +29,12 @@ parser.add_argument("epochs", nargs="?", default=3000)
 parser.add_argument("epochs_log", nargs="?", default=1)
 parser.add_argument("epochs_test", nargs="?", default=100)
 parser.add_argument("epochs_test_start", nargs="?", default=1)
+parser.add_argument("milestones", nargs="?", default=[400, 1000])
 parser.add_argument("test_total_size", nargs="?", default=10)
 parser.add_argument("test_batch_size", nargs="?", default=32)
 parser.add_argument("graph_save_path", nargs="?", default="./graphs/")
 parser.add_argument("fname_pred", nargs="?", default="out_")
+
 args = parser.parse_args()
 
 graphs = create_graph(args)
@@ -58,13 +58,13 @@ rnn = GRU(
     num_layers=args.num_layers,
     has_input=True,
     has_output=False,
-).to(device)
+)
 
 output = MLP(
     h_size=args.hidden_size_rnn,
     embedding_size=args.embedding_size_output,
     y_size=args.max_prev_node,
-).to(device)
+)
 
 ### Build data stuff
 
@@ -83,6 +83,8 @@ dataset_loader = torch.utils.data.DataLoader(
     sampler=sample_strategy,
 )
 
-### Train
+model = GraphRNN(rnn, output, args)
 
-train(args, dataset_loader, rnn, output, device)
+### Train
+trainer = pl.Trainer()
+trainer.fit(model, dataset_loader)
