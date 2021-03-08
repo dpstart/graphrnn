@@ -88,5 +88,5 @@ dataset_loader = torch.utils.data.DataLoader(
 model = GraphRNN(rnn, output, args)
 
 ### Train
-trainer = pl.Trainer(gpus=1)
+trainer = pl.Trainer(gpus=1, show_progress_bar=False)
 trainer.fit(model, dataset_loader)
