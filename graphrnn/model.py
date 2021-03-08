@@ -22,10 +22,15 @@ class GraphRNN(pl.LightningModule):
         self.mlp = mlp
         self.args = args
     
-    def forward(self, x, y_len):
-        h = self.rnn(x, pack=True, input_len=y_len)
-        y_pred = self.mlp(h)
-        return torch.sigmoid(y_pred)
+    def forward(self, x, y_len=None, test=False):
+
+        if not test:
+            h = self.rnn(x, pack=True, input_len=y_len)
+            y_pred = self.mlp(h)
+            return torch.sigmoid(y_pred)
+        else:
+            h = self.rnn(x)
+            return self.mlp(h)
 
     def test_epoch(
         self,
@@ -52,7 +57,7 @@ class GraphRNN(pl.LightningModule):
             torch.ones(test_batch_size, 1, self.args.max_prev_node)
         ).to(device)
         for i in range(max_num_node):
-            y_pred_step = self(x_step)
+            y_pred_step = self(x_step, test=True)
             y_pred[:, i : i + 1, :] = F.sigmoid(y_pred_step)
             x_step = sample_sigmoid(
                 y_pred_step, sample=True, sample_time=sample_time
